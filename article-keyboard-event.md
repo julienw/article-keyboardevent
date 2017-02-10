@@ -57,4 +57,16 @@ What happens on the Web?
 ------------------------
 Well, to be completely honest with you, [it used to be a complete
 mess](http://unixpapa.com/js/key.html). Then we converged to a cross-browser
-behavior appropriate for QWERTY keyboard.
+behavior appropriate for QWERTY keyboards.
+
+
+The new API, part of UI Events
+------------------------------
+UI Events, formerly known as DOM Level 3 Events, is a W3C specification in
+discussion since 2000. It's still being discussed as a Working Draft, but
+because most browsers seem to agree today, we can hope that the specification
+will move forward to a recommendation. [Latest working draft is available on
+line](https://w3c.github.io/uievents/) as is [latest publishd
+version](https://www.w3.org/TR/uievents/).
+
+
