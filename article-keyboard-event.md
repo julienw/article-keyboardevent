@@ -66,7 +66,40 @@ UI Events, formerly known as DOM Level 3 Events, is a W3C specification in
 discussion since 2000. It's still being discussed as a Working Draft, but
 because most browsers seem to agree today, we can hope that the specification
 will move forward to a recommendation. [Latest working draft is available on
-line](https://w3c.github.io/uievents/) as is [latest publishd
-version](https://www.w3.org/TR/uievents/).
+line](https://w3c.github.io/uievents/#events-keyboardevents) as is [latest published
+version](https://www.w3.org/TR/uievents/#https://www.w3.org/TR/uievents/#events-keyboardevents).
+
+The new API brings two new very useful properties to a `KeyboardEvent` event:
+_key_ and _code_. They replace the previously existing (and _still_ existing)
+`charCode`, `keyCode`, and `which`.
+
+Let's see why they are so useful, especially to do cross-keyboard websites (if
+you allow me this neologism).
+
+
+
+Other useful things to know about this new API
+----------------------------------------------
+Without entering into too much detail, let's fly over some other significant
+functionalities in the API:
+
+* The `keypress` event is deprecated. Now you should always use `keydown`
+    instead. The event `beforeinput` is also planned but isn't supported by any
+    stable version of a browser (Chrome Canary has an implementation). The event
+    `input` is a higher-level event that is also useful in some situations.
+* With the `location` property on `KeyboardEvent`, if a pressed key exists in
+    several locations — eg the Shift or Ctrl keys, or the digits —, then you can
+    know which one was really used. For example you can know whether the pressed
+    key is in the Numlock Keyboard or on the digit top bar.
+    Note that this information is also contained
+    in the `code` property, as every physical key gets its own `code`.
+* The `repeat` property is set to `true` if the user kept a key depressed and a
+    event was sent repeatidly as a result.
+* If you want to know if a modifier key is depressed while handling another key's
+    `KeyboardEvent`, you don't need to keep track of the state yourself. The
+    boolean properties `altKey`, `ctrlKey`, `metaKey`, `shiftKey` as well as the
+    method [getModifierState](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/getModifierState)
+    can give you the state of various modifier keys when the event was
+    triggered.
 
 
