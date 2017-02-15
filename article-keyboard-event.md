@@ -70,13 +70,57 @@ line](https://w3c.github.io/uievents/#events-keyboardevents) as is [latest publi
 version](https://www.w3.org/TR/uievents/#https://www.w3.org/TR/uievents/#events-keyboardevents).
 
 The new API brings two new very useful properties to a `KeyboardEvent` event:
-_key_ and _code_. They replace the previously existing (and _still_ existing)
+`key` and `code`. They replace the previously existing (and _still_ existing)
 `charCode`, `keyCode`, and `which`.
 
 Let's see why they are so useful, especially to do cross-keyboard websites (if
 you allow me this neologism).
 
+### `KeyboardEvent.key` gives you a printable character or a describing string
 
+The property `key` is almost a direct replacement to the previous existing
+`which`, except it's a lot more predictable.
+
+In case the pressed key is a printable character you'll get this character in
+string form (instead of its ASCII/Windows-1252 code for `which` and
+`keyCode`, or Unicode code for `charCode`).
+
+In case it's not a printable character (for example: _Backspace_, _Control_, but
+also _Enter_ or _Tab_ which _actually_ have printable characters) we get a
+multi-character describing string, like `'Backspace'`, `'Control'`, `'Enter'`,
+`'Tab'`.
+
+### `KeyboardEvent.code` gives you the physical key
+
+This property is completely new, although this is what `keyCode` should have
+been.
+
+It gives you, in a string form, the physical key that was pressed. When we say
+_physical_, we mean it's totally independant of the keyboard layout used at the
+moment.
+
+So let's say the user presses the _Q_ key on a QWERTY keyboard. Then
+`event.code` gives you `'KeyQ'` while `event.key` gives you `'q'`.
+
+But when a AZERTY keyboard user presses the _A_ key, he also gets `'KeyQ'` as
+`event.code`, yet `event.key` contains `'a'`. Because the _A_ key on a AZERTY
+keyboard is at the same location as the _Q_ key on a QWERTY keyboard.
+
+As for numbers, the top digit bar yields values like `'Digit1'`, while the
+numeric pad yields values like `'Numpad1'`.
+
+### Cross-browser WASD controls
+
+[The wonderful MDN wiki has a good example about how to control a game using WASD
+or arrows](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Handle_keyboard_events_in_a_game).
+
+But it's not cross-browser, especially it doesn't work on Safari because Safari
+doesn't implement this specification yet. So let's look at how we can have some
+cross-browser code.
+
+Of course, where the specification isn't implemented, it won't work properly on
+a non-QWERTY keyboard, so it's a good idea to also handle the arrow keys that
+always are at the same place.
 
 Other useful things to know about this new API
 ----------------------------------------------
@@ -102,4 +146,6 @@ functionalities in the API:
     can give you the state of various modifier keys when the event was
     triggered.
 
+Funny enough, the keyboard events don't seem to work properly on mobile
+platforms (iPhone untested).
 
