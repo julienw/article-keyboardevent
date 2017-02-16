@@ -42,30 +42,43 @@ window.addEventListener('keydown', function(e) {
     return;
   }
 
+  if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
+    return;
+  }
+
   var direction = {
     x: 0,
     y: 0
   };
 
-  switch(e.code || e.key) {
+  switch (e.code || e.key || e.keyCode) {
     case 'KeyW':
     case 'KeyI':
     case 'ArrowUp':
+    case 'Numpad8':
+    case 38: // keyCode for arrow up
       direction.y = -1;
       break;
     case 'KeyA':
     case 'KeyJ':
     case 'ArrowLeft':
+    case 'Numpad4':
+    case 37: // keyCode for arrow left
       direction.x = -1;
       break;
     case 'KeyS':
     case 'KeyK':
     case 'ArrowDown':
+    case 'Numpad5':
+    case 'Numpad2':
+    case 40: // keyCode for arrow down
       direction.y = 1;
       break;
     case 'KeyD':
     case 'KeyL':
     case 'ArrowRight':
+    case 'Numpad6':
+    case 39: // keyCode for arrow right
       direction.x = 1;
       break;
     default:
