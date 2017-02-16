@@ -92,8 +92,8 @@ multi-character describing string, like `'Backspace'`, `'Control'`, `'Enter'`,
 
 ### `KeyboardEvent.code` gives you the physical key
 
-This property is completely new, although this is what `keyCode` should have
-been.
+This property is completely new with this specification, although this is what
+`keyCode` should have been.
 
 It gives you, in a string form, the physical key that was pressed. When we say
 _physical_, we mean it's totally independant of the keyboard layout used at the
@@ -109,6 +109,8 @@ keyboard is at the same location as the _Q_ key on a QWERTY keyboard.
 As for numbers, the top digit bar yields values like `'Digit1'`, while the
 numeric pad yields values like `'Numpad1'`.
 
+Unfortunately it's implemented only in Blink and Firefox so far.
+
 ### Cross-browser WASD controls
 
 [The wonderful MDN wiki has a good example about how to control a game using WASD
@@ -120,7 +122,10 @@ cross-browser code.
 
 Of course, where the specification isn't implemented, it won't work properly on
 a non-QWERTY keyboard, so it's a good idea to also handle the arrow keys that
-always are at the same place.
+always are at the same place everywhere.
+
+```javascript
+```
 
 Other useful things to know about this new API
 ----------------------------------------------

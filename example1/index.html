@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='initial-scale=1'>
+    <style>
+.board {
+  display: flex;
+
+  width: 50em;
+  height: 50em;
+  background-color: black;
+}
+
+.piece {
+  flex: none;
+  margin: auto;
+
+  width: 5em;
+  height: 5em;
+
+  background-color: yellow;
+
+  transition: transform .2s;
+}
+    </style>
+  </head>
+  <body>
+    <div class='board'>
+      <div class='piece'></div>
+    </div>
+    <script>
+
+var piece = document.querySelector('.piece');
+var pieceLocation = {
+  x: 0,
+  y: 0
+};
+
+window.addEventListener('keydown', function(e) {
+  if (e.defaultPrevented) {
+    return;
+  }
+
+  var direction = {
+    x: 0,
+    y: 0
+  };
+
+  switch(e.code || e.key) {
+    case 'KeyW':
+    case 'KeyI':
+    case 'ArrowUp':
+      direction.y = -1;
+      break;
+    case 'KeyA':
+    case 'KeyJ':
+    case 'ArrowLeft':
+      direction.x = -1;
+      break;
+    case 'KeyS':
+    case 'KeyK':
+    case 'ArrowDown':
+      direction.y = 1;
+      break;
+    case 'KeyD':
+    case 'KeyL':
+    case 'ArrowRight':
+      direction.x = 1;
+      break;
+    default:
+      return;
+  }
+
+  e.preventDefault();
+  pieceLocation.x += direction.x;
+  pieceLocation.y += direction.y;
+  positionPiece();
+});
+
+function positionPiece() {
+  piece.style.transform = 'translate(' +
+      pieceLocation.x + 'em, ' +
+      pieceLocation.y + 'em)';
+}
+    </script>
+  </body>
+</html>
