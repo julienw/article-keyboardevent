@@ -279,3 +279,11 @@ functionalities in the API:
 Funny enough, the keyboard events don't seem to work properly on mobile
 platforms (iPhone untested).
 
+
+You can use it now
+------------------
+This will be my conclusion: you can use this __now__. It's possible to
+progressively enhance your control code by taking advantage of the newer API for
+modern browsers while supporting older browsers in the same time.
+
+Your international users will thank you for this... by using your product :-)
