@@ -141,8 +141,111 @@ a non-QWERTY keyboard, so it's a good idea to also handle the arrow keys that
 always are at the same place everywhere. In this example I also use the numeric
 pad and the IJKL keys as they're less likely to be at different locations.
 
-```javascript
+```html
+<!doctype html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='initial-scale=1'>
+    <style>
+.board {
+  display: flex;
+
+  width: 50em;
+  height: 50em;
+  background-color: black;
+}
+
+.piece {
+  flex: none;
+  margin: auto;
+
+  width: 5em;
+  height: 5em;
+
+  background-color: yellow;
+
+  transition: transform .2s;
+}
+    </style>
+  </head>
+  <body>
+    <div class='board'>
+      <div class='piece'></div>
+    </div>
+    <script>
+
+var piece = document.querySelector('.piece');
+var pieceLocation = {
+  x: 0,
+  y: 0
+};
+
+window.addEventListener('keydown', function(e) {
+  if (e.defaultPrevented) {
+    return;
+  }
+
+  if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
+    return;
+  }
+
+  var direction = {
+    x: 0,
+    y: 0
+  };
+
+  switch (e.code || e.key || e.keyCode) {
+    case 'KeyW':
+    case 'KeyI':
+    case 'ArrowUp':
+    case 'Numpad8':
+    case 38: // keyCode for arrow up
+      direction.y = -1;
+      break;
+    case 'KeyA':
+    case 'KeyJ':
+    case 'ArrowLeft':
+    case 'Numpad4':
+    case 37: // keyCode for arrow left
+      direction.x = -1;
+      break;
+    case 'KeyS':
+    case 'KeyK':
+    case 'ArrowDown':
+    case 'Numpad5':
+    case 'Numpad2':
+    case 40: // keyCode for arrow down
+      direction.y = 1;
+      break;
+    case 'KeyD':
+    case 'KeyL':
+    case 'ArrowRight':
+    case 'Numpad6':
+    case 39: // keyCode for arrow right
+      direction.x = 1;
+      break;
+    default:
+      return;
+  }
+
+  e.preventDefault();
+  pieceLocation.x += direction.x;
+  pieceLocation.y += direction.y;
+  positionPiece();
+});
+
+function positionPiece() {
+  piece.style.transform = 'translate(' +
+      pieceLocation.x + 'em, ' +
+      pieceLocation.y + 'em)';
+}
+    </script>
+  </body>
+</html>
 ```
+
+[Try it by yourself](https://julienw.github.io/article-keyboardevent/example1/)!
 
 Other useful things to know about this new API
 ----------------------------------------------
