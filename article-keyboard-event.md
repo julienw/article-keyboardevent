@@ -158,7 +158,7 @@ pad and the IJKL keys as they're less likely to be at different locations.
 
 .piece {
   flex: none;
-  margin: auto;
+  margin: auto; /* initial position is at the center */
 
   width: 5em;
   height: 5em;
@@ -186,6 +186,7 @@ window.addEventListener('keydown', function(e) {
     return;
   }
 
+  // We don't want to mess with the browser's shortcuts
   if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
     return;
   }
@@ -195,6 +196,10 @@ window.addEventListener('keydown', function(e) {
     y: 0
   };
 
+  // We try to use `code` first because that's the layout-independent property.
+  // Then we use `key` because some browsers, notably Internet Explorer and
+  // Edge, support it but not `code`. Then we use `keyCode` to support older
+  // browsers like Safari, older Internet Explorer and older Chrome.
   switch (e.code || e.key || e.keyCode) {
     case 'KeyW':
     case 'KeyI':
