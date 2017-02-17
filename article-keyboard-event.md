@@ -22,16 +22,28 @@ page](https://en.wikipedia.org/wiki/Keyboard_layout), but I'll try to
 summarise the important bits here.
 
 ![A QWERTY keyboard](QWERTY.png)
+_A QWERTY keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:KB_United_States-NoAltGr.svg))_
 
 The best-known layout is QWERTY, used in most of the world and AZERTY in some
-french-speaking countries. But AZERTY is also used a lot in some french-speaking
+french-speaking countries.
+
+![A AZERTY keyboard](AZERTY.png)
+_A AZERTY keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:Clavier-Azerty-France.svg))_
+
+But AZERTY is also used a lot in some french-speaking
 country, as well as QWERTZ in Germany and other european countries, and DVORAK
 as an alternative to QWERTY.
+
+![A DVORAK keyboard](DVORAK.png)
+_A DVORAK keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:Clavier-Dvorak.svg))_
 
 All these layouts also have variants, especially in the symbols in the top bar,
 or the rightmost keys. Two QWERTY keyboards might not be exactly the same. For
 example spanish keyboards have a special key for _ñ_, and german keyboards have
 special keys for _ä_ and _ö_.
+
+![A QWERTZ keyboard](QWERTZ.png)
+_A german QWERTZ keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:KB_Germany.svg))_
 
 But what's important to understand is that the keyboards
 have the same structure for all layouts. The keys are mostly at the same
@@ -49,7 +61,8 @@ system without changing the physical keyboard_. They are two different things.
 Some users will install improved layout drivers to be able to type faster or
 more easily some characters. This is especially useful when some useful
 characters are not normally available on the layout; to type in French I can
-very easily reach _É_, _È_, _Ç_ or the french quotes _«_ and _»_.
+very easily reach _É_, _È_, _Ç_ or the french quotes _«_ and _»_ thanks to the
+driver I'm using.
 
 But it comes also handy when you need to write text in several languages: I
 don't have the _ø_ character anywhere on my keyboard but my driver allows me to
