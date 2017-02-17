@@ -21,6 +21,8 @@ layouts. You can read a lot on [Wikipedia's dedicated
 page](https://en.wikipedia.org/wiki/Keyboard_layout), but I'll try to
 summarise the important bits here.
 
+![A QWERTY keyboard](QWERTY.png)
+
 The best-known layout is QWERTY, used in most of the world and AZERTY in some
 french-speaking countries. But AZERTY is also used a lot in some french-speaking
 country, as well as QWERTZ in Germany and other european countries, and DVORAK
@@ -111,18 +113,20 @@ numeric pad yields values like `'Numpad1'`.
 
 Unfortunately it's implemented only in Blink and Firefox so far.
 
-### Cross-browser WASD controls
+### Cross-browser controls
 
 [The wonderful MDN wiki has a good example about how to control a game using WASD
 or arrows](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Handle_keyboard_events_in_a_game).
 
-But it's not cross-browser, especially it doesn't work on Safari because Safari
-doesn't implement this specification yet. So let's look at how we can have some
-cross-browser code.
+But it's not cross-browser, especially it doesn't work on Safari or Internet
+Explorer because they doesn't implement this specification yet (it should come
+in next Safari version 10.1 though!).
+So let's look at how we can have some cross-browser code.
 
 Of course, where the specification isn't implemented, it won't work properly on
 a non-QWERTY keyboard, so it's a good idea to also handle the arrow keys that
-always are at the same place everywhere.
+always are at the same place everywhere. In this example I also use the numeric
+pad and the IJKL keys as they're less likely to be at different locations.
 
 ```javascript
 ```
