@@ -132,7 +132,7 @@ Unfortunately it's implemented only in Blink and Firefox so far.
 or arrows](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Handle_keyboard_events_in_a_game).
 
 But it's not cross-browser, especially it doesn't work on Safari or Internet
-Explorer because they doesn't implement this specification yet (it should come
+Explorer because they don't implement this specification yet (it should come
 in next Safari version 10.1 though!).
 So let's look at how we can have some cross-browser code.
 
