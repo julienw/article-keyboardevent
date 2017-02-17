@@ -21,20 +21,20 @@ layouts. You can read a lot on [Wikipedia's dedicated
 page](https://en.wikipedia.org/wiki/Keyboard_layout), but I'll try to
 summarise the important bits here.
 
-![A QWERTY keyboard](QWERTY.png)
+![A QWERTY keyboard](QWERTY.png)<br>
 _A QWERTY keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:KB_United_States-NoAltGr.svg))_
 
 The best-known layout is QWERTY, used in most of the world and AZERTY in some
 french-speaking countries.
 
-![A AZERTY keyboard](AZERTY.png)
+![A AZERTY keyboard](AZERTY.png)<br>
 _A AZERTY keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:Clavier-Azerty-France.svg))_
 
 But AZERTY is also used a lot in some french-speaking
 country, as well as QWERTZ in Germany and other european countries, and DVORAK
 as an alternative to QWERTY.
 
-![A DVORAK keyboard](DVORAK.png)
+![A DVORAK keyboard](DVORAK.png)<br>
 _A DVORAK keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:Clavier-Dvorak.svg))_
 
 All these layouts also have variants, especially in the symbols in the top bar,
@@ -42,7 +42,7 @@ or the rightmost keys. Two QWERTY keyboards might not be exactly the same. For
 example spanish keyboards have a special key for _ñ_, and german keyboards have
 special keys for _ä_ and _ö_.
 
-![A QWERTZ keyboard](QWERTZ.png)
+![A QWERTZ keyboard](QWERTZ.png)<br>
 _A german QWERTZ keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:KB_Germany.svg))_
 
 But what's important to understand is that the keyboards
