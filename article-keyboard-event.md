@@ -171,21 +171,38 @@ pad and the IJKL keys as they're less likely to be at different locations.
 .board {
   display: flex;
 
-  width: 50em;
-  height: 50em;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
   background-color: black;
 }
 
 .piece {
   flex: none;
-  margin: auto; /* initial position is at the center */
+  /* initial position is at the center */
+  margin: auto;
 
   width: 5em;
   height: 5em;
 
   background-color: yellow;
+  border-radius: .5em;
 
   transition: transform .2s;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+
+  /* prevent the select UI */
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select:none;
+  user-select: none;
 }
     </style>
   </head>
@@ -194,17 +211,26 @@ pad and the IJKL keys as they're less likely to be at different locations.
       <div class='piece'></div>
     </div>
     <script>
-
 var piece = document.querySelector('.piece');
 var pieceLocation = {
   x: 0,
   y: 0
 };
 
+function positionPiece(direction) {
+  pieceLocation.x += direction.x;
+  pieceLocation.y += direction.y;
+
+  piece.style.transform = 'translate(' +
+      pieceLocation.x + 'em, ' +
+      pieceLocation.y + 'em)';
+}
+
+// keyboard handling
 window.addEventListener('keydown', function(e) {
   if (e.defaultPrevented) {
-    return;
-  }
+      return;
+    }
 
   // We don't want to mess with the browser's shortcuts
   if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
@@ -255,22 +281,47 @@ window.addEventListener('keydown', function(e) {
   }
 
   e.preventDefault();
-  pieceLocation.x += direction.x;
-  pieceLocation.y += direction.y;
-  positionPiece();
+  positionPiece(direction);
 });
 
-function positionPiece() {
-  piece.style.transform = 'translate(' +
-      pieceLocation.x + 'em, ' +
-      pieceLocation.y + 'em)';
+// touch handling
+// this doesn't work so well, but this is here as an example.
+function handleTouchMove(e) {
+  var touch = e.touches[0];
+  var x = touch.clientX;
+  var y = touch.clientY;
+
+  var iw = window.innerWidth;
+  var ih = window.innerHeight;
+
+  var direction = {
+    x: 0,
+    y: 0
+  };
+
+  direction.x = (x / iw - 0.5) * 4;
+  direction.y = (y / ih - 0.5) * 4;
+
+  positionPiece(direction);
 }
+
+var timeoutId; // for throttling
+window.addEventListener('touchmove', function(e) {
+  if (timeoutId) {
+    return;
+  }
+  timeoutId = setTimeout(function() {
+    handleTouchMove(e);
+    timeoutId = null;
+  }, 50);
+});
+
     </script>
   </body>
 </html>
 ```
 
-[Try it by yourself](https://julienw.github.io/article-keyboardevent/example1/)!
+[Try it by yourself](http://output.jsbin.com/noyudo/5)!
 
 Other useful things to know about this new API
 ----------------------------------------------
