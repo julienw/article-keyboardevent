@@ -13,25 +13,25 @@ actually expose a useful API for this.
 Let's dig a little bit into the problem we have.
 
 
-Keyboards layouts
------------------
+One keyboard, many layouts
+--------------------------
 I'm sure you know this already, but maybe you never took the time to really
 understand what it means: people around the world use different keyboard
 layouts. You can read a lot on [Wikipedia's dedicated
 page](https://en.wikipedia.org/wiki/Keyboard_layout), but I'll try to
 summarise the important bits here.
 
+The best-known and most used layout is QWERTY, used in most of the world.
+
 ![A QWERTY keyboard](QWERTY.png)<br>
 _A QWERTY keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:KB_United_States-NoAltGr.svg))_
 
-The best-known layout is QWERTY, used in most of the world and AZERTY in some
-french-speaking countries.
+But AZERTY is also used a lot in some french-speaking countries.
 
 ![A AZERTY keyboard](AZERTY.png)<br>
 _A AZERTY keyboard (source: [Wikipedia](https://commons.wikimedia.org/wiki/File:Clavier-Azerty-France.svg))_
 
-But AZERTY is also used a lot in some french-speaking
-country, as well as QWERTZ in Germany and other european countries, and DVORAK
+As well as QWERTZ in Germany and other european countries, and DVORAK
 as an alternative to QWERTY.
 
 ![A DVORAK keyboard](DVORAK.png)<br>
@@ -50,7 +50,7 @@ have the same structure for all layouts. The keys are mostly at the same
 place, although can be slightly arranged. This is called the _mechanical
 layout_.
 
-So what we'll call a regional layout is:
+So a regional layout will be made of:
 * what's physically printed on the physical key; this is called the _visual
     layout_.
 * software (driver) mapping the hardware keys to characters; this is called the
@@ -58,11 +58,13 @@ So what we'll call a regional layout is:
 
 This also means that we can actually _change the layout used in the operating
 system without changing the physical keyboard_. They are two different things.
-Some users will install improved layout drivers to be able to type faster or
+Some users will install
+[improved](http://users.sfr.be/denis.liegeois/kbdfrac.htm) [layout](https://github.com/fabi1cazenave/qwerty-lafayette)
+[drivers](http://marin.jb.free.fr/qwerty-fr/) to be able to type faster or
 more easily some characters. This is especially useful when some useful
-characters are not normally available on the layout; to type in French I can
-very easily reach _É_, _È_, _Ç_ or the french quotes _«_ and _»_ thanks to the
-driver I'm using.
+characters are not normally available on the layout. For example, to type in
+French I can very easily reach _É_, _È_, _Ç_ or the french quotes _«_ and _»_
+thanks to the driver I'm using.
 
 But it comes also handy when you need to write text in several languages: I
 don't have the _ø_ character anywhere on my keyboard but my driver allows me to
@@ -71,9 +73,27 @@ type it easily.
 What happens on the Web?
 ------------------------
 Well, to be completely honest with you, [it used to be a complete
-mess](http://unixpapa.com/js/key.html). Then we converged to a cross-browser
-behavior appropriate for QWERTY keyboards.
+mess](http://unixpapa.com/js/key.html). Then we converged to a (somewhat)
+cross-browser behavior appropriate for QWERTY keyboards.
 
+The API we've been used to know revolves around the three events `keydown`,
+`keypress`, and `keyup`. `keydown` and `keyup` are called _key events_ because
+they are fired each time a user press any key, while `keypress` is called a
+_character event_ because it's supposed to be fired when a _character_ is sent
+as a result of the key press. All modern browsers seem to agree on this, even if
+it wasn't always the case.
+
+For this legacy API, we use the three properties of `KeyboardEvent` `keyCode`,
+`charCode` and `which`. I won't enter much into the details here, please believe
+me when I tell you this is a nightmare to work with:
+* they don't have the same meaning whether we're handling a key event
+    (`keydown` or `keyup`) or a character event (`keypress`).
+* for some keys and events the values are not cross-browser, even for the latest
+    versions.
+* `keyCode` on key events tries to be international-friendly — no, really — but
+    it fails miserably, because of the lack of a common specification.
+
+So let's see what the new API brings us!
 
 The new API, part of UI Events
 ------------------------------
@@ -277,8 +297,7 @@ functionalities in the API:
     triggered.
 
 Funny enough, the keyboard events don't seem to work properly on mobile
-platforms (iPhone untested).
-
+platforms (iPhone untested). So take care to have a touch interface as well!
 
 You can use it now
 ------------------
