@@ -144,7 +144,8 @@ keyboard is at the same location as the _Q_ key on a QWERTY keyboard.
 As for numbers, the top digit bar yields values like `'Digit1'`, while the
 numeric pad yields values like `'Numpad1'`.
 
-Unfortunately it's implemented only in Blink and Firefox so far.
+Unfortunately it's implemented only in Blink and Firefox so far, but Safari
+support is coming soon.
 
 ### Cross-browser controls
 
