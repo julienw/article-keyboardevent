@@ -2,8 +2,7 @@ Recently I came across two lovely new graphical demos, and in both cases, the co
 
 There was the wonderful WebGL 2 technological demo <a href="https://www.youtube.com/watch?v=TT7ugKuUMv0/">After The Flood</a>, and the very cute <a href="http://codepen.io/shshaw/full/apwMwM/">Alpaca Peck</a>. Shaw was nice enough to fix the latter when I told him about the issue. It turns out the web browser actually exposes a useful API for this.
 
-Let's investigate further. 
-
+Let's investigate further.
 <h2>One keyboard, many layouts</h2>
 I'm sure you know this already, but maybe you never took the time to really understand what it means: people around the world use different keyboard layouts. You can read a lot on <a href="https://en.wikipedia.org/wiki/Keyboard_layout">Wikipedia's keyboard layout page</a>, but I'll try to summarise the important bits here.
 
@@ -33,7 +32,6 @@ So a regional layout is made up of:
 This means <strong>we can actually change the layout used in the operating system without changing the physical keyboard</strong>. They are two different things! Some users will install <a href="http://users.sfr.be/denis.liegeois/kbdfrac.htm">improved</a> <a href="https://github.com/fabi1cazenave/qwerty-lafayette">layout</a> <a href="http://marin.jb.free.fr/qwerty-fr/">drivers</a> to be able to type faster or to type specific characters more easily. This is very helpful when useful characters are not normally available in the layout. For example, to type in French, I can very easily reach <code>É</code>, <code>È</code>, <code>Ç</code> or the french quotes <code>«</code> and <code>»</code> thanks to the driver I'm using.
 
 But it comes also handy when you need to write text in several languages: I don't have the <code>ø</code> character anywhere on my keyboard but my driver allows me to type it easily.
-
 <h2>What happens on the Web?</h2>
 Well, to be completely honest with you, <a href="http://unixpapa.com/js/key.html">it used to be a complete mess</a>. Then we converged to a cross-browser behavior appropriate (more or less) for QWERTY keyboards.
 
@@ -45,17 +43,15 @@ For this legacy API, we use the three properties of <code>KeyboardEvent</code>, 
  	<li>For some keys and events, the values are not consistent cross-browser, even for the latest browser versions.</li>
  	<li><code>keyCode</code> on key events tries to be international-friendly — no, really — but it fails miserably, because of the lack of a common specification.</li>
 </ul>
-
 So, let's see what improvements the new API brings us!
 <h2>The new API, part of UI Events</h2>
-
 <a href="https://w3c.github.io/uievents/">UI Events</a>, formerly known as DOM Level 3 Events, is a W3C specification in discussion since 2000. It's still being discussed as a Working Draft, but because most browsers seem to agree today, we can hope that the specification will move forward to a recommendation. The latest <a href="https://w3c.github.io/uievents/#events-keyboardevents">keyboard events working draft</a> is available online now.
 
 The new API brings two new very useful properties to a <code>KeyboardEvent</code> event: <code>key</code> and <code>code</code>. They replace the previously existing (and <em>still</em> existing) <code>charCode</code>, <code>keyCode</code>, and <code>which</code>.
 
 Let's see why these changes are so useful, especially to do <em>cross-keyboard</em> websites (if you allow me this neologism).
 <h3><code>KeyboardEvent.key</code> gives you a printable character or a descriptive string</h3>
-The property <code>key</code> is almost a direct replacement for the previously used  <code>which</code>, except it's a lot more predictable.
+The property <code>key</code> is almost a direct replacement for the previously used <code>which</code>, except it's a lot more predictable.
 
 When the pressed key is a printable character, you get the character in string form (instead of its ASCII/Windows-1252 code for <code>which</code> and <code>keyCode</code>, or Unicode code for <code>charCode</code>).
 
@@ -63,7 +59,7 @@ When the pressed key is not a printable character (for example: _Backspace_, _Co
 
 Among major, modern desktop browsers, only Safari doesn't support the property yet, but will in the next version.
 
-<a href='http://caniuse.com/#search=keyboardevent.code'><img class="aligncenter wp-image-30476 size-full" src="https://hacks.mozilla.org/files/2017/02/KeyboardEvent.key-usage-201702.png" alt="KeyboardEvent.key Browser Usage, February 2017. All Desktop browsers except Safari supports the property. Next version of Safari will support it though." width="675" height="281" /></a>
+<a href="http://caniuse.com/#search=keyboardevent.code"><img class="aligncenter wp-image-30476 size-full" src="https://hacks.mozilla.org/files/2017/02/KeyboardEvent.key-usage-201702.png" alt="KeyboardEvent.key Browser Usage, February 2017. All Desktop browsers except Safari supports the property. Next version of Safari will support it though." width="675" height="281" /></a>
 <h3><code>KeyboardEvent.code</code> gives you the physical key</h3>
 The property is completely new with this specification, although it is what `keyCode` should have been.
 
@@ -77,80 +73,29 @@ As for numbers, the top digit bar yields values like `'Digit1'`, while the numer
 
 Unfortunately this feature is currently implemented only in Blink and Firefox, but Safari support is coming soon.
 
-<a href='http://caniuse.com/#search=keyboardevent.code'><img class="aligncenter wp-image-30475 size-full" src="https://hacks.mozilla.org/files/2017/02/KeyboardEvent.code-usage-201702.png" alt="KeyboardEvent.code Browser Usage, February 2017. Firefox and Blink-based browsers like Chrome and Opera supports it. Safari will support it in the next version. Internet Explorer, Edge and most mobile browsers do not." width="675" height="281" /></a>
+<a href="http://caniuse.com/#search=keyboardevent.code"><img class="aligncenter wp-image-30475 size-full" src="https://hacks.mozilla.org/files/2017/02/KeyboardEvent.code-usage-201702.png" alt="KeyboardEvent.code Browser Usage, February 2017. Firefox and Blink-based browsers like Chrome and Opera supports it. Safari will support it in the next version. Internet Explorer, Edge and most mobile browsers do not." width="675" height="281" /></a>
+<h3>The reference keyboard</h3>
+If each key triggers a specific code, then the next question is: Which code is triggered for which key? What is the reference keyboard?
+
+This is more complicated than it seems. There's no existing keyboard with all the possible keys.
+
+That's why the W3C published <a href='https://www.w3.org/TR/uievents-code/'>a specification just for this</a>. You can read about <a href="https://www.w3.org/TR/uievents-code/#keyboard-layout">the existing mechanical layouts</a> around the world, <a href="https://www.w3.org/TR/uievents-code/#code-value-tables">as well as their reference keyboard</a>. For instance here is their reference keyboard for the alphanumerical part:
+
+<a href='https://www.w3.org/TR/uievents-code/#key-alphanumeric-writing-system'><img class="aligncenter wp-image-30545 size-full" src="https://hacks.mozilla.org/files/2017/02/keyboard-codes-alphanum1.png" width="800" height="276" alt="Keyboard Codes, alphanumeric section. Click for a SVG version" /></a>
+
+I encourage to at least get a general view of this specification.
+
+Please also note that the W3C also published <a href='https://www.w3.org/TR/uievents-key/'>a sister specification describing the values for the <code>key</code> property</a>.
+
+<h3>The relation entre keys and codes</h3>
+https://w3c.github.io/uievents/#keys
 <h2>Cross-browser controls</h2>
 The wonderful MDN wiki has a good example about <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Handle_keyboard_events_in_a_game">how to control a game using WASD or arrows</a>. But the example doesn't run cross-browser, and in particular, it doesn't work on Safari or Internet Explorer because they don't implement this specification yet (it should arrive in Safari version 10.1). So let's look at how we can support some cross-browser code.
 
-Of course, where the specification isn't implemented, it won't work properly on a non-QWERTY keyboard.  For this reason, it's a good idea to handle the arrow keys so that they are always in the same place everywhere. In this example, I also use the numeric pad and the IJKL keys as they're less likely to be at different locations.
+Of course, where the specification isn't implemented, it won't work properly on a non-QWERTY keyboard. For this reason, it's a good idea to handle the arrow keys so that they are always in the same place everywhere. In this example, I also use the numeric pad and the IJKL keys as they're less likely to be at different locations.
 
 Here's an example of how JavaScript code can support both the new API and the older API.
 <pre><code lang="js">
-&lt;!doctype html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;meta charset='utf-8'&gt;
-    &lt;meta name='viewport' content='initial-scale=1'&gt;
-    &lt;style&gt;
-.board {
-  display: flex;
-
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-
-  background-color: black;
-}
-
-.piece {
-  flex: none;
-  /* initial position is at the center */
-  margin: auto;
-
-  width: 5em;
-  height: 5em;
-
-  background-color: yellow;
-  border-radius: .5em;
-
-  transition: transform .2s;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-
-  /* prevent touch selection UI */
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select:none;
-  user-select: none;
-}
-    &lt;/style&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;!-- a very simple UI --&gt;
-    &lt;div class='board'&gt;
-      &lt;div class='piece'&gt;&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;script&gt;
-var piece = document.querySelector('.piece');
-var pieceLocation = {
-  x: 0,
-  y: 0
-};
-
-function positionPiece(direction) {
-  pieceLocation.x += direction.x;
-  pieceLocation.y += direction.y;
-
-  piece.style.transform = 'translate(' +
-      pieceLocation.x + 'em, ' +
-      pieceLocation.y + 'em)';
-}
-
-// keyboard handling
 window.addEventListener('keydown', function(e) {
   if (e.defaultPrevented) {
     return;
@@ -160,11 +105,6 @@ window.addEventListener('keydown', function(e) {
   if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
     return;
   }
-
-  var direction = {
-    x: 0,
-    y: 0
-  };
 
   // We try to use `code` first because that's the layout-independent property.
   // Then we use `key` because some browsers, notably Internet Explorer and
@@ -176,78 +116,27 @@ window.addEventListener('keydown', function(e) {
     case 'ArrowUp':
     case 'Numpad8':
     case 38: // keyCode for arrow up
-      direction.y = -1;
+      changeDirectionUp();
       break;
-    case 'KeyA': // This is 'A' on QWERTY keyboards, but 'Q' on AZERTY keyboards
-    case 'KeyJ':
-    case 'ArrowLeft':
-    case 'Numpad4':
-    case 37: // keyCode for arrow left
-      direction.x = -1;
-      break;
-    case 'KeyS':
-    case 'KeyK':
-    case 'ArrowDown':
-    case 'Numpad5':
-    case 'Numpad2':
-    case 40: // keyCode for arrow down
-      direction.y = 1;
-      break;
-    case 'KeyD':
-    case 'KeyL':
-    case 'ArrowRight':
-    case 'Numpad6':
-    case 39: // keyCode for arrow right
-      direction.x = 1;
-      break;
+   
+    // ... Other letters: ASD, JKL, arrows, numpad
+
     default:
       return;
   }
 
   e.preventDefault();
-  positionPiece(direction);
+  doSomethingUseful();
 });
 
 // touch handling
-// This doesn't work so well, but this is here as an example.
-// A real implementation would want to measure the distance from
-// the piece and use this instead of the distance from the center.
-function handleTouchMove(e) {
-  var touch = e.touches[0];
-  var x = touch.clientX;
-  var y = touch.clientY;
-
-  var iw = window.innerWidth;
-  var ih = window.innerHeight;
-
-  var direction = {
-    x: 0,
-    y: 0
-  };
-
-  direction.x = (x / iw - 0.5) * 4;
-  direction.y = (y / ih - 0.5) * 4;
-
-  positionPiece(direction);
-}
-
-var timeoutId; // for throttling
-// A real implementation would want to use touchstart and touchend instead.
+// A real implementation would want to use touchstart and touchend as well.
 window.addEventListener('touchmove', function(e) {
-  if (timeoutId) {
-    return;
-  }
-  timeoutId = setTimeout(function() {
-    handleTouchMove(e);
-    timeoutId = null;
-  }, 50);
+  // don't forget to throttle the event
 });
 
-    &lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
 </code></pre>
-<a href="http://output.jsbin.com/noyudo/5">Try it for yourself</a>!
+<a href="http://output.jsbin.com/noyudo/5">Try the full version</a>!
 <h2>What's missing?</h2>
 The API itself is quite well done, not much is missing.
 
