@@ -1,0 +1,270 @@
+Recently I came across two lovely new graphical demos, and in both cases, the controls would not work on my French <a href="https://en.wikipedia.org/wiki/AZERTY">AZERTY keyboard</a>.
+
+There was the wonderful WebGL 2 technological demo <a href="https://www.youtube.com/watch?v=TT7ugKuUMv0/">After The Flood</a>, and the very cute <a href="http://codepen.io/shshaw/full/apwMwM/">Alpaca Peck</a>. Shaw was nice enough to fix the latter when I told him about the issue. It turns out the web browser actually exposes a useful API for this.
+
+Let's investigate further. 
+
+<h2>One keyboard, many layouts</h2>
+I'm sure you know this already, but maybe you never took the time to really understand what it means: people around the world use different keyboard layouts. You can read a lot on <a href="https://en.wikipedia.org/wiki/Keyboard_layout">Wikipedia's keyboard layout page</a>, but I'll try to summarise the important bits here.
+
+The best-known and most used layout is <a href="https://en.wikipedia.org/wiki/QWERTY">QWERTY</a>, used in most of the world:
+
+<a href="https://commons.wikimedia.org/wiki/File:KB_United_States-NoAltGr.svg"><img class="size-large wp-image-30469" src="https://hacks.mozilla.org/files/2017/02/QWERTY.png" alt="A QWERTY layout. This layout is called QWERTY for the first six letters in the keyboard." width="500" height="167" /></a>
+
+But AZERTY is also used a lot in some French-speaking countries:
+
+<a href="https://commons.wikimedia.org/wiki/File:Clavier-Azerty-France.svg"><img class="size-large wp-image-30467" src="https://hacks.mozilla.org/files/2017/02/AZERTY-500x154.png" alt="A AZERTY layout. AZERTY are the six first letters in the keyboard. Many, but not all of the letters, are in the same place as in QWERTY." width="500" height="154" /></a>
+
+In addition, the QWERTZ keyboard is in use in Germany and other European countries, and DVORAK is another alternative to QWERTY:
+
+<a href="https://commons.wikimedia.org/wiki/File:Clavier-Dvorak.svg"><img class="size-large wp-image-30468" src="https://hacks.mozilla.org/files/2017/02/DVORAK-500x154.png" alt="A DVORAK layout. This layout is completely different to AZERTY and QWERTY." width="500" height="154" /></a>
+
+Each layout also has variants, especially in the symbols in the topmost row, as well as in the right-hand keys. Two QWERTY keyboards might not be exactly the same. For example Spanish keyboards have a special key for <code>ñ</code>, and German keyboards have special keys for <code>ä</code> and <code>ö</code>.
+
+<a href="https://commons.wikimedia.org/wiki/File:KB_Germany.svg"><img class="size-large wp-image-30470" src="https://hacks.mozilla.org/files/2017/02/QWERTZ-500x167.png" alt="A QWERTZ layout is really close to QWERTY yet has subtle differences." width="500" height="167" /></a>
+
+What's important to understand is that the keyboards have the same structure for all layouts. For the most part, the keys are in the same location, although they can be slightly rearranged or adjusted. This is called the <em>mechanical layout</em>.
+
+So a regional layout is made up of:
+<ul>
+ 	<li><em>Visual layout</em>: that which is physically printed on the physical keys.</li>
+ 	<li><em>Functional layout</em>: this refers to the software (driver) mapping the hardware keys to characters.</li>
+</ul>
+This means <strong>we can actually change the layout used in the operating system without changing the physical keyboard</strong>. They are two different things! Some users will install <a href="http://users.sfr.be/denis.liegeois/kbdfrac.htm">improved</a> <a href="https://github.com/fabi1cazenave/qwerty-lafayette">layout</a> <a href="http://marin.jb.free.fr/qwerty-fr/">drivers</a> to be able to type faster or to type specific characters more easily. This is very helpful when useful characters are not normally available in the layout. For example, to type in French, I can very easily reach <code>É</code>, <code>È</code>, <code>Ç</code> or the french quotes <code>«</code> and <code>»</code> thanks to the driver I'm using.
+
+But it comes also handy when you need to write text in several languages: I don't have the <code>ø</code> character anywhere on my keyboard but my driver allows me to type it easily.
+
+<h2>What happens on the Web?</h2>
+Well, to be completely honest with you, <a href="http://unixpapa.com/js/key.html">it used to be a complete mess</a>. Then we converged to a cross-browser behavior appropriate (more or less) for QWERTY keyboards.
+
+The API we've grown used to revolves around the three events: <code>keydown</code>, <code>keypress</code>, and <code>keyup</code>. <code>keydown</code> and <code>keyup</code> are called <em>key events</em> because they are fired each time a user presses any key, while <code>keypress</code> is called a <em>character event</em> because it's supposed to be fired when a <em>character</em> is sent as a result of the key press. All modern browsers seem to agree on this, even if it wasn't always the case.
+
+For this legacy API, we use the three properties of <code>KeyboardEvent</code>, <code>keyCode</code>, <code>charCode</code> and <code>which</code>. I won't enter much into the details here, please believe me when I tell you this is a nightmare to work with:
+<ul>
+ 	<li>Properties don't have the same meaning when handling a key event (<code>keydown</code> or <code>keyup</code>) versus a character event (<code>keypress</code>).</li>
+ 	<li>For some keys and events, the values are not consistent cross-browser, even for the latest browser versions.</li>
+ 	<li><code>keyCode</code> on key events tries to be international-friendly — no, really — but it fails miserably, because of the lack of a common specification.</li>
+</ul>
+
+So, let's see what improvements the new API brings us!
+<h2>The new API, part of UI Events</h2>
+
+<a href="https://w3c.github.io/uievents/">UI Events</a>, formerly known as DOM Level 3 Events, is a W3C specification in discussion since 2000. It's still being discussed as a Working Draft, but because most browsers seem to agree today, we can hope that the specification will move forward to a recommendation. The latest <a href="https://w3c.github.io/uievents/#events-keyboardevents">keyboard events working draft</a> is available online now.
+
+The new API brings two new very useful properties to a <code>KeyboardEvent</code> event: <code>key</code> and <code>code</code>. They replace the previously existing (and <em>still</em> existing) <code>charCode</code>, <code>keyCode</code>, and <code>which</code>.
+
+Let's see why these changes are so useful, especially to do <em>cross-keyboard</em> websites (if you allow me this neologism).
+<h3><code>KeyboardEvent.key</code> gives you a printable character or a descriptive string</h3>
+The property <code>key</code> is almost a direct replacement for the previously used  <code>which</code>, except it's a lot more predictable.
+
+When the pressed key is a printable character, you get the character in string form (instead of its ASCII/Windows-1252 code for <code>which</code> and <code>keyCode</code>, or Unicode code for <code>charCode</code>).
+
+When the pressed key is not a printable character (for example: _Backspace_, _Control_, but also _Enter_ or _Tab_ which _actually_ have printable characters), you get a multi-character descriptive string, like `'Backspace'`, `'Control'`, `'Enter'`, `'Tab'`.
+
+Among major, modern desktop browsers, only Safari doesn't support the property yet, but will in the next version.
+
+<a href='http://caniuse.com/#search=keyboardevent.code'><img class="aligncenter wp-image-30476 size-full" src="https://hacks.mozilla.org/files/2017/02/KeyboardEvent.key-usage-201702.png" alt="KeyboardEvent.key Browser Usage, February 2017. All Desktop browsers except Safari supports the property. Next version of Safari will support it though." width="675" height="281" /></a>
+<h3><code>KeyboardEvent.code</code> gives you the physical key</h3>
+The property is completely new with this specification, although it is what `keyCode` should have been.
+
+It gives you, in a string form, the physical key that was pressed. When we say _physical_, we mean it's totally independent of the keyboard layout that is being used.
+
+So let's say the user presses the _Q_ key on a QWERTY keyboard. Then `event.code` gives you `'KeyQ'` while `event.key` gives you `'q'`.
+
+But when a AZERTY keyboard user presses the _A_ key, he also gets `'KeyQ'` as `event.code`, yet `event.key` contains `'a'`. This happens because the _A_ key on a AZERTY keyboard is at the same location as the _Q_ key on a QWERTY keyboard.
+
+As for numbers, the top digit bar yields values like `'Digit1'`, while the numeric pad yields values like `'Numpad1'`.
+
+Unfortunately this feature is currently implemented only in Blink and Firefox, but Safari support is coming soon.
+
+<a href='http://caniuse.com/#search=keyboardevent.code'><img class="aligncenter wp-image-30475 size-full" src="https://hacks.mozilla.org/files/2017/02/KeyboardEvent.code-usage-201702.png" alt="KeyboardEvent.code Browser Usage, February 2017. Firefox and Blink-based browsers like Chrome and Opera supports it. Safari will support it in the next version. Internet Explorer, Edge and most mobile browsers do not." width="675" height="281" /></a>
+<h2>Cross-browser controls</h2>
+The wonderful MDN wiki has a good example about <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code#Handle_keyboard_events_in_a_game">how to control a game using WASD or arrows</a>. But the example doesn't run cross-browser, and in particular, it doesn't work on Safari or Internet Explorer because they don't implement this specification yet (it should arrive in Safari version 10.1). So let's look at how we can support some cross-browser code.
+
+Of course, where the specification isn't implemented, it won't work properly on a non-QWERTY keyboard.  For this reason, it's a good idea to handle the arrow keys so that they are always in the same place everywhere. In this example, I also use the numeric pad and the IJKL keys as they're less likely to be at different locations.
+
+Here's an example of how JavaScript code can support both the new API and the older API.
+<pre><code lang="js">
+&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset='utf-8'&gt;
+    &lt;meta name='viewport' content='initial-scale=1'&gt;
+    &lt;style&gt;
+.board {
+  display: flex;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background-color: black;
+}
+
+.piece {
+  flex: none;
+  /* initial position is at the center */
+  margin: auto;
+
+  width: 5em;
+  height: 5em;
+
+  background-color: yellow;
+  border-radius: .5em;
+
+  transition: transform .2s;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+
+  /* prevent touch selection UI */
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select:none;
+  user-select: none;
+}
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- a very simple UI --&gt;
+    &lt;div class='board'&gt;
+      &lt;div class='piece'&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script&gt;
+var piece = document.querySelector('.piece');
+var pieceLocation = {
+  x: 0,
+  y: 0
+};
+
+function positionPiece(direction) {
+  pieceLocation.x += direction.x;
+  pieceLocation.y += direction.y;
+
+  piece.style.transform = 'translate(' +
+      pieceLocation.x + 'em, ' +
+      pieceLocation.y + 'em)';
+}
+
+// keyboard handling
+window.addEventListener('keydown', function(e) {
+  if (e.defaultPrevented) {
+    return;
+  }
+
+  // We don't want to mess with the browser's shortcuts
+  if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
+    return;
+  }
+
+  var direction = {
+    x: 0,
+    y: 0
+  };
+
+  // We try to use `code` first because that's the layout-independent property.
+  // Then we use `key` because some browsers, notably Internet Explorer and
+  // Edge, support it but not `code`. Then we use `keyCode` to support older
+  // browsers like Safari, older Internet Explorer and older Chrome.
+  switch (e.code || e.key || e.keyCode) {
+    case 'KeyW': // This is 'W' on QWERTY keyboards, but 'Z' on AZERTY keyboards
+    case 'KeyI':
+    case 'ArrowUp':
+    case 'Numpad8':
+    case 38: // keyCode for arrow up
+      direction.y = -1;
+      break;
+    case 'KeyA': // This is 'A' on QWERTY keyboards, but 'Q' on AZERTY keyboards
+    case 'KeyJ':
+    case 'ArrowLeft':
+    case 'Numpad4':
+    case 37: // keyCode for arrow left
+      direction.x = -1;
+      break;
+    case 'KeyS':
+    case 'KeyK':
+    case 'ArrowDown':
+    case 'Numpad5':
+    case 'Numpad2':
+    case 40: // keyCode for arrow down
+      direction.y = 1;
+      break;
+    case 'KeyD':
+    case 'KeyL':
+    case 'ArrowRight':
+    case 'Numpad6':
+    case 39: // keyCode for arrow right
+      direction.x = 1;
+      break;
+    default:
+      return;
+  }
+
+  e.preventDefault();
+  positionPiece(direction);
+});
+
+// touch handling
+// This doesn't work so well, but this is here as an example.
+// A real implementation would want to measure the distance from
+// the piece and use this instead of the distance from the center.
+function handleTouchMove(e) {
+  var touch = e.touches[0];
+  var x = touch.clientX;
+  var y = touch.clientY;
+
+  var iw = window.innerWidth;
+  var ih = window.innerHeight;
+
+  var direction = {
+    x: 0,
+    y: 0
+  };
+
+  direction.x = (x / iw - 0.5) * 4;
+  direction.y = (y / ih - 0.5) * 4;
+
+  positionPiece(direction);
+}
+
+var timeoutId; // for throttling
+// A real implementation would want to use touchstart and touchend instead.
+window.addEventListener('touchmove', function(e) {
+  if (timeoutId) {
+    return;
+  }
+  timeoutId = setTimeout(function() {
+    handleTouchMove(e);
+    timeoutId = null;
+  }, 50);
+});
+
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<a href="http://output.jsbin.com/noyudo/5">Try it for yourself</a>!
+<h2>What's missing?</h2>
+The API itself is quite well done, not much is missing.
+
+Yet I miss something. There is no way to know what the current keyboard layout is. This would be really useful to know for writing the instructions to control the game: <code>press WASD/ZQSD/...</code> depending on the layout.
+
+An API to know which letter is behind a specific key would be useful. Yet I don't know for sure if the underlying operating systems offer the necessary low-level calls to provide that information.
+<h2>Other useful things</h2>
+Without entering into too much detail, let's fly over some other significant functionalities in the API:
+<ul>
+ 	<li>The <code>keypress</code> event is deprecated. Now you should always use <code>keydown</code> instead. The event <code>beforeinput</code> is also planned but isn't supported by any stable version of a browser (Chrome Canary has an implementation). The event <code>input</code> is a higher-level event that is also useful in some situations.</li>
+ 	<li>With the <code>location</code> property on <code>KeyboardEvent</code>, if a pressed key exists in several locations — e.g. the Shift or Ctrl keys, or the digits —, then you can know which one was actually used. For example, you can know whether the pressed key is in the numeric pad or on the digit top bar.
+Note: This information is also contained in the <code>code</code> property, as every physical key gets its own <code>code</code>.</li>
+ 	<li>The <code>repeat</code> property is set to <code>true</code> if the user keeps a key depressed and an event is sent repeatedly as a result.</li>
+ 	<li>If you want to know if a modifier key is depressed while handling another key's <code>KeyboardEvent</code>, you don't need to keep track of the state yourself. The boolean properties <code>altKey</code>, <code>ctrlKey</code>, <code>metaKey</code>, <code>shiftKey</code>, as well as the method <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/getModifierState">getModifierState</a>, can give you the state of various modifier keys when the event was triggered.</li>
+</ul>
+Oddly enough, the keyboard events don't seem to work properly on mobile platforms (iPhone untested). So take care to have a touch interface as well!
+<h2>You can use it now</h2>
+This is my conclusion: You can use this <em>now</em>! It's possible to progressively enhance your game controller code by taking advantage of the newer API for modern browsers while supporting older browsers at the same time.
+
+Your international users will thank you for this... by using your product :-)
